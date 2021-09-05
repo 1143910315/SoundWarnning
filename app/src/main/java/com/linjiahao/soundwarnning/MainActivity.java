@@ -1,28 +1,17 @@
 package com.linjiahao.soundwarnning;
 
-import android.media.MediaPlayer;
-import android.media.audiofx.Visualizer;
-import android.net.Uri;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Environment;
-import android.view.View;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.linjiahao.soundwarnning.databinding.ActivityMainBinding;
-import com.linjiahao.soundwarnning.fft.VisualizerFFTView;
-import com.linjiahao.soundwarnning.fft.VisualizerView;
-
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
     public static MainActivity content;
