@@ -5,6 +5,7 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
@@ -36,23 +37,42 @@ public class SingleVisualizeView extends AudioVisualizeView {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+//        Paint pp = new Paint();
+//        pp.setColor(Color.GREEN);
+//        pp.setStyle(Paint.Style.FILL);
+//        canvas.drawRect(new Rect(0,0,getWidth(),getHeight()),pp);
+        if (mRawAudioBytes == null) {
+            return;
+        }
         int width = getWidth();
         int height = getHeight();
         Paint mPaint = new Paint();
-        mPaint.setColor(Color.argb(0, 255, 0, 0));
+        mPaint.setColor(Color.argb(255, 255, 0, 0));
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setMaskFilter(new BlurMaskFilter(5, BlurMaskFilter.Blur.SOLID));
+        int block = 30;
+        int length = mRawAudioBytes.length / block;
         if (width > height) {
-            mPaint.setStrokeWidth(1f * width / mRawAudioBytes.length);
-            for (int i = 0; i < mRawAudioBytes.length; i++) {
-                canvas.drawLine(1f * width * i / mRawAudioBytes.length, height - 50, 1f * width * i / mRawAudioBytes.length, (float) (height - 50 - mRawAudioBytes[i]), mPaint);
+            mPaint.setStrokeWidth(1f * width / length);
+            for (int i = 0; i < length; i++) {
+                float startX = 1f * width * i / length;
+                int startY = height - 50;
+                float stopX = 1f * width * i / length;
+                float stopY = (float) (height - 50 - mRawAudioBytes[i * block]);
+                stopY = stopY / 100;
+                canvas.drawLine(startX, startY, stopX, stopY, mPaint);
             }
         } else {
-            mPaint.setStrokeWidth(1f * height / mRawAudioBytes.length);
-            for (int i = 0; i < mRawAudioBytes.length; i++) {
-                canvas.drawLine(width + 50, 1f * height * i / mRawAudioBytes.length, (float) (50 + mRawAudioBytes[i]), 1f * height * i / mRawAudioBytes.length, mPaint);
+            mPaint.setStrokeWidth(1f * height / length);
+            for (int i = 0; i < length; i++) {
+                float startX = 10;
+                float startY = 1f * height * i / length;
+                float stopX = (float) (10 + mRawAudioBytes[i * block]);
+                stopX = stopX / 100;
+                float stopY = 1f * height * i / length;
+                canvas.drawLine(startX, startY, stopX, stopY, mPaint);
             }
         }
     }

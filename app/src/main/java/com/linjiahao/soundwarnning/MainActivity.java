@@ -1,10 +1,16 @@
 package com.linjiahao.soundwarnning;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,9 +29,42 @@ public class MainActivity extends AppCompatActivity {
 //    private VisualizerFFTView mFFtView;
 //    private Visualizer mVisualizer;
 
+    private final int REQUEST_CODE_ADDRESS = 100;
+
+    private void checkPermission() {
+        int checkCoarse = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int checkCoarseFine = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (checkCoarse == PackageManager.PERMISSION_GRANTED && checkCoarseFine == PackageManager.PERMISSION_GRANTED) {
+            //已经授权
+        } else {//没有权限
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE_ADDRESS);//申请授权
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_ADDRESS:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    // Permission Denied 权限被拒绝
+                    Toast.makeText(this, "权限被禁用", Toast.LENGTH_LONG).show();
+                }
+                // Permission Granted 授予权限
+                //处理授权之后逻辑
+                break;
+            default:
+                break;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
+        checkPermission();
         content = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

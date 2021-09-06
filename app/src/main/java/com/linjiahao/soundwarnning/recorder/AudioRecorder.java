@@ -16,7 +16,7 @@ public class AudioRecorder {
 
     private final BufferFullListener listener;
     //一次处理的帧数
-    public static final int PERIOD_IN_FRAMES = 22050;
+    public static final int PERIOD_IN_FRAMES = 12050;
     private int audioSource;
     private int sampleRateInHz;
     private int channelConfig;
@@ -40,7 +40,7 @@ public class AudioRecorder {
     }
 
     public void startRecord() {
-        int bufferSizeInBytes = getBufferSizeInShorts();
+        int bufferSizeInBytes = sampleRateInHz* 2;
         audioRecord = new AudioRecord(audioSource, sampleRateInHz, channelConfig, audioFormat,
                 bufferSizeInBytes);
         setAudioSource(audioRecord.getAudioSource());
@@ -62,7 +62,7 @@ public class AudioRecorder {
             public void onPeriodicNotification(AudioRecord recorder) {
                 short[] buffer = getBuffer();
                 int read = recorder.read(buffer, 0, PERIOD_IN_FRAMES * channelCount);
-                if (read != PERIOD_IN_FRAMES * buffer.length) {
+                if (read != PERIOD_IN_FRAMES *channelCount) {
                     throw new RuntimeException("运行异常，错误长度的缓冲区或错误的帧标记！");
                 }
                 listener.onBufferFullCallback();
@@ -76,6 +76,9 @@ public class AudioRecorder {
     }
 
     public short[] swapAudioData(short[] emptyBuffer) {
+        if (emptyBuffer == null || emptyBuffer.length != buffer1.length) {
+            emptyBuffer = new short[buffer1.length];
+        }
         short[] temp;
         if (first) {
             temp = buffer1;
@@ -138,8 +141,4 @@ public class AudioRecorder {
         this.audioFormat = audioFormat;
     }
 
-    public int getBufferSizeInShorts() {
-        //return AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
-        return PERIOD_IN_FRAMES * channelCount;
-    }
 }

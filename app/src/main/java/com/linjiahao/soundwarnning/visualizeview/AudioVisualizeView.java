@@ -7,6 +7,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import java.util.concurrent.locks.Lock;
+
 public abstract class AudioVisualizeView extends View {
     private class syncRunnable implements Runnable {
 
@@ -60,7 +62,7 @@ public abstract class AudioVisualizeView extends View {
         synchronized (obj) {
             post(syncRunnable);
             try {
-                wait();
+                obj.wait();
                 postInvalidate();
                 return syncRunnable.temp;
             } catch (InterruptedException e) {
