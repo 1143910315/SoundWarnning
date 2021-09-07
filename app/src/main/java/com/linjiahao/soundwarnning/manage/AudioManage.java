@@ -7,14 +7,14 @@ import com.linjiahao.soundwarnning.visualizeview.AudioVisualizeView;
 
 public class AudioManage {
     public static final int fftLength = 8192;
-    private AudioVisualizeView audioVisualizeView;
+    private final AudioVisualizeView audioVisualizeView;
     private AudioRecorder audioRecorder;
     private short[] audioDataBuffer;
     private boolean FFTing = false;
     private final Complex[] fftData1 = new Complex[fftLength];
     private final Complex[] fftData2 = new Complex[fftLength];
     private int fftDataLength = 0;
-    double[] fftValueData = new double[fftLength / 4];
+    double[] fftValueData = new double[fftLength / 2];
     private boolean first = true;
 
     public AudioManage(AudioVisualizeView audioVisualizeView) {
@@ -36,7 +36,7 @@ public class AudioManage {
                                 fftDataLength = 0;
                                 first = false;
                                 Complex[] frequency = FFT.getFFT(fftData1);
-                                for (int j = 0; j < fftLength / 4; j++) {
+                                for (int j = 0; j < fftLength / 2; j++) {
                                     fftValueData[j] = frequency[j].getMod();
                                 }
                                 fftValueData=audioVisualizeView.swapFftDataCaptureData(fftValueData);
@@ -48,7 +48,7 @@ public class AudioManage {
                                 fftDataLength = 0;
                                 first = true;
                                 Complex[] frequency = FFT.getFFT(fftData2);
-                                for (int j = 0; j < fftLength / 4; j++) {
+                                for (int j = 0; j < fftLength / 2; j++) {
                                     fftValueData[j] = frequency[j].getMod();
                                 }
                                 fftValueData=audioVisualizeView.swapFftDataCaptureData(fftValueData);

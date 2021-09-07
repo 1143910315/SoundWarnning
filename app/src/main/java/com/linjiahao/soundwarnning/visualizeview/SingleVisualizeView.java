@@ -47,33 +47,38 @@ public class SingleVisualizeView extends AudioVisualizeView {
         int width = getWidth();
         int height = getHeight();
         Paint mPaint = new Paint();
-        mPaint.setColor(Color.argb(255, 255, 0, 0));
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setMaskFilter(new BlurMaskFilter(5, BlurMaskFilter.Blur.SOLID));
-        int block = 30;
-        int length = mRawAudioBytes.length / block;
+        int length = mRawAudioBytes.length;
+        float scale = 100;
+        mPaint.setStrokeWidth(1f);
         if (width > height) {
-            mPaint.setStrokeWidth(1f * width / length);
-            for (int i = 0; i < length; i++) {
-                float startX = 1f * width * i / length;
-                int startY = height - 50;
-                float stopX = 1f * width * i / length;
-                float stopY = (float) (height - 50 - mRawAudioBytes[i * block]);
-                stopY = stopY / 100;
-                canvas.drawLine(startX, startY, stopX, stopY, mPaint);
+            for (int i = Math.max((int) -drawStartX, 0); i < Math.min(length, width - drawStartX); i++) {
+                float startX = i + drawStartX;
+                float startY = height - 50;
+                float stopY = (float) (height - 50 - mRawAudioBytes[i] / scale);
+                setColor(i, 44100, length, mPaint);
+                canvas.drawLine(startX, startY, startX, stopY, mPaint);
             }
         } else {
-            mPaint.setStrokeWidth(1f * height / length);
-            for (int i = 0; i < length; i++) {
-                float startX = 10;
-                float startY = 1f * height * i / length;
-                float stopX = (float) (10 + mRawAudioBytes[i * block]);
-                stopX = stopX / 100;
-                float stopY = 1f * height * i / length;
-                canvas.drawLine(startX, startY, stopX, stopY, mPaint);
+            for (int i = Math.max((int) -drawStartY, 0); i < Math.min(length, height - drawStartY); i++) {
+                float startX = 50;
+                float startY = i + drawStartY;
+                float stopX = (float) (50 + mRawAudioBytes[i] / scale);
+                setColor(i, 44100, length, mPaint);
+                canvas.drawLine(startX, startY, stopX, startY, mPaint);
             }
+        }
+    }
+
+    private void setColor(int fIndex, int sampleRate, int fLength, Paint paint) {
+        double i = 1.0 * fIndex * sampleRate / fLength*2;
+        if (i > 65 && i < 1100) {
+            paint.setColor(Color.YELLOW);
+        } else {
+            paint.setColor(Color.RED);
         }
     }
 }
