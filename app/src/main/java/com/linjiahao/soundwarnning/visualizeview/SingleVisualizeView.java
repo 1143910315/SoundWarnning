@@ -53,19 +53,21 @@ public class SingleVisualizeView extends AudioVisualizeView {
         mPaint.setMaskFilter(new BlurMaskFilter(5, BlurMaskFilter.Blur.SOLID));
         int length = mRawAudioBytes.length;
         float scale = 100;
-        mPaint.setStrokeWidth(1f);
+        mPaint.setStrokeWidth(6f);
         if (width > height) {
-            for (int i = Math.max((int) -drawStartX, 0); i < Math.min(length, width - drawStartX); i++) {
-                float startX = i + drawStartX;
+            int i = Math.max((int) -drawStartX, 0);
+            float startX = i + drawStartX;
+            for (; i < length && startX < width; i++, startX += 6) {
                 float startY = height - 50;
                 float stopY = (float) (height - 50 - mRawAudioBytes[i] / scale);
                 setColor(i, 44100, length, mPaint);
                 canvas.drawLine(startX, startY, startX, stopY, mPaint);
             }
         } else {
-            for (int i = Math.max((int) -drawStartY, 0); i < Math.min(length, height - drawStartY); i++) {
+            int i = Math.max((int) -drawStartY, 0);
+            float startY = i + drawStartY;
+            for (; i < length && startY < height; i++, startY += 6) {
                 float startX = 50;
-                float startY = i + drawStartY;
                 float stopX = (float) (50 + mRawAudioBytes[i] / scale);
                 setColor(i, 44100, length, mPaint);
                 canvas.drawLine(startX, startY, stopX, startY, mPaint);
@@ -74,7 +76,7 @@ public class SingleVisualizeView extends AudioVisualizeView {
     }
 
     private void setColor(int fIndex, int sampleRate, int fLength, Paint paint) {
-        double i = 1.0 * fIndex * sampleRate / fLength*2;
+        double i = 1.0 * fIndex * sampleRate / fLength * 2;
         if (i > 65 && i < 1100) {
             paint.setColor(Color.YELLOW);
         } else {
